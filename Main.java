@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -18,7 +19,7 @@ for (int i = 0; i < seats.length; i++) {
 
     seats[i] = new Seat(row + "" + number);
 }
-Booking booking = null;
+ArrayList<Booking> bookings = new ArrayList<>();
 int bookingCounter = 1001;
 
         int choice;
@@ -169,32 +170,33 @@ case 1:
         String bookingId = "BK" + bookingCounter;
         bookingCounter++;
 
-        booking = new Booking(
+       Booking newBooking = new Booking(
         bookingId,
         selectedMovie,
         numberOfTickets,
         selectedSeats,
         totalAmount
 );
-    System.out.println("\n========== BOOKING SUMMARY ==========");
 
-    System.out.println("Booking ID: " + booking.bookingId);
-    System.out.println("Movie: " + selectedMovie.name);
-    System.out.println("Tickets: " + numberOfTickets);
+bookings.add(newBooking);
+   System.out.println("\n========== BOOKING SUMMARY ==========");
 
-        System.out.print("Seats: ");
+System.out.println("Booking ID: " + newBooking.bookingId);
+System.out.println("Movie: " + newBooking.movie.name);
+System.out.println("Tickets: " + newBooking.numberOfTickets);
 
-        for (int i = 0; i < selectedSeats.length; i++) {
-            System.out.print(selectedSeats[i]);
+System.out.print("Seats: ");
 
-            if (i < selectedSeats.length - 1) {
-                System.out.print(", ");
-            }
-        }
+for (int i = 0; i < newBooking.selectedSeats.length; i++) {
+    System.out.print(newBooking.selectedSeats[i]);
 
-        System.out.println("\nTotal amount: ₹" + totalAmount);
-        System.out.println("Booking successful!");
+    if (i < newBooking.selectedSeats.length - 1) {
+        System.out.print(", ");
     }
+}
+
+System.out.println("\nTotal amount: ₹" + newBooking.totalAmount);
+System.out.println("Booking successful!"); }
 
     break;      
 
@@ -202,40 +204,53 @@ case 1:
 
     System.out.println("\n========== CANCEL TICKET ==========");
 
-    if (booking == null) {
-        System.out.println("No booking found!");
+    if (bookings.isEmpty()) {
+        System.out.println("No bookings found!");
         break;
     }
 
     System.out.print("Enter Booking ID: ");
     String cancelBookingId = scanner.next();
 
-    if (cancelBookingId.equalsIgnoreCase(booking.bookingId)) {
+    Booking bookingToCancel = null;
+
+    // Search for the booking
+    for (Booking b : bookings) {
+
+        if (b.bookingId.equalsIgnoreCase(cancelBookingId)) {
+            bookingToCancel = b;
+            break;
+        }
+    }
+
+    if (bookingToCancel != null) {
 
         System.out.println("\nBooking found!");
 
-        System.out.println("Booking ID: " + booking.bookingId);
-        System.out.println("Movie: " + booking.movie.name);
-        System.out.println("Tickets: " + booking.numberOfTickets);
+        System.out.println("Booking ID: " + bookingToCancel.bookingId);
+        System.out.println("Movie: " + bookingToCancel.movie.name);
+        System.out.println("Tickets: " + bookingToCancel.numberOfTickets);
 
         System.out.print("Seats: ");
 
-        for (int i = 0; i < booking.selectedSeats.length; i++) {
-            System.out.print(booking.selectedSeats[i]);
+        for (int i = 0; i < bookingToCancel.selectedSeats.length; i++) {
 
-            if (i < booking.selectedSeats.length - 1) {
+            System.out.print(bookingToCancel.selectedSeats[i]);
+
+            if (i < bookingToCancel.selectedSeats.length - 1) {
                 System.out.print(", ");
             }
         }
 
-        System.out.println("\nTotal amount: ₹" + booking.totalAmount);
+        System.out.println("\nTotal amount: ₹" + bookingToCancel.totalAmount);
 
         System.out.print("\nAre you sure you want to cancel? (Y/N): ");
         String confirmation = scanner.next();
 
         if (confirmation.equalsIgnoreCase("Y")) {
 
-            for (String selectedSeat : booking.selectedSeats) {
+            // Release the seats
+            for (String selectedSeat : bookingToCancel.selectedSeats) {
 
                 for (Seat seat : seats) {
 
@@ -246,16 +261,19 @@ case 1:
                 }
             }
 
-            booking = null;
+            // Remove booking from the list
+            bookings.remove(bookingToCancel);
 
             System.out.println("\nBooking cancelled successfully!");
             System.out.println("Your seats are now available.");
 
         } else {
+
             System.out.println("\nBooking cancellation cancelled.");
         }
 
     } else {
+
         System.out.println("\nBooking ID not found!");
     }
 
