@@ -198,9 +198,68 @@ case 1:
 
     break;      
 
-                case 3:
-                    System.out.println("Cancelling ticket...");
-                    break;
+               case 3:
+
+    System.out.println("\n========== CANCEL TICKET ==========");
+
+    if (booking == null) {
+        System.out.println("No booking found!");
+        break;
+    }
+
+    System.out.print("Enter Booking ID: ");
+    String cancelBookingId = scanner.next();
+
+    if (cancelBookingId.equalsIgnoreCase(booking.bookingId)) {
+
+        System.out.println("\nBooking found!");
+
+        System.out.println("Booking ID: " + booking.bookingId);
+        System.out.println("Movie: " + booking.movie.name);
+        System.out.println("Tickets: " + booking.numberOfTickets);
+
+        System.out.print("Seats: ");
+
+        for (int i = 0; i < booking.selectedSeats.length; i++) {
+            System.out.print(booking.selectedSeats[i]);
+
+            if (i < booking.selectedSeats.length - 1) {
+                System.out.print(", ");
+            }
+        }
+
+        System.out.println("\nTotal amount: ₹" + booking.totalAmount);
+
+        System.out.print("\nAre you sure you want to cancel? (Y/N): ");
+        String confirmation = scanner.next();
+
+        if (confirmation.equalsIgnoreCase("Y")) {
+
+            for (String selectedSeat : booking.selectedSeats) {
+
+                for (Seat seat : seats) {
+
+                    if (seat.seatNumber.equalsIgnoreCase(selectedSeat)) {
+                        seat.booked = false;
+                        break;
+                    }
+                }
+            }
+
+            booking = null;
+
+            System.out.println("\nBooking cancelled successfully!");
+            System.out.println("Your seats are now available.");
+
+        } else {
+            System.out.println("\nBooking cancellation cancelled.");
+        }
+
+    } else {
+        System.out.println("\nBooking ID not found!");
+    }
+
+    break;
 
                 case 4:
                     System.out.println("Thank you for using Movie Ticket Booking!");
